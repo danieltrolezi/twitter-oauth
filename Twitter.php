@@ -1,18 +1,16 @@
 <?php
 /**
- * Resource Twitter
- * A simple PHP class that makes more easy to work with themattharris/tmhoauth and integrate with Twitter API
+ * Twitter
+ * A simple PHP class that makes more easy to work with themattharris/tmhoauth.
  * themattharris/tmhoauth can be found here: https://github.com/themattharris/tmhOAuth
- *
- * You can both install via composer or include the file right here.
  *
  * @package resource-twitter
  * @author Daniel Trolezi <danieltrolezi@outlook.com>
  * @author Gabriel Lucas <eu@gabriellucas.com.br>
- * @version 1.0.0
+ * @version 1.0.1
  */
 
-class Resource_Twitter extends tmhOAuth
+class Twitter extends tmhOAuth
 {
     protected $consumerKeys;
 
