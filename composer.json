@@ -1,20 +1,22 @@
 {
-    "name": "danieltrolezi/twitter-oauth",
-    "description": "A simple PHP class that makes more easy to work with themattharris/tmhoauth.",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Daniel Trolezi",
-            "email": "danieltrolezi@outlook.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-		"php": ">=5.3.0",
-		"ext-curl": "*",
-        "themattharris/tmhoauth": "0.8.*"
-	},
-    "autoload": {
-        "psr-0": { "Twitter": "" }
+  "name": "danieltrolezi/twitter-oauth",
+  "description": "A simple PHP class that makes more easy to work with themattharris/tmhoauth.",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Daniel Trolezi",
+      "email": "danieltrolezi@outlook.com"
     }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.3.0",
+    "ext-curl": "*",
+    "themattharris/tmhoauth": "0.8.*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Twitter": ""
+    }
+  }
 }
