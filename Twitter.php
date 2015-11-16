@@ -5,10 +5,9 @@
  * A simple PHP class that makes more easy to work with themattharris/tmhoauth.
  * themattharris/tmhoauth can be found here: https://github.com/themattharris/tmhOAuth
  *
- * @package resource-twitter
+ * @package twitter-oauth
  * @author Daniel Trolezi <danieltrolezi@outlook.com>
- * @author Gabriel Lucas <eu@gabriellucas.com.br>
- * @version 1.0.2
+ * @version 1.0.3
  */
 class Twitter extends tmhOAuth
 {
@@ -38,13 +37,13 @@ class Twitter extends tmhOAuth
         $twitterOAuthSession['oauth_token'] = $request['oauth_token'];
         $twitterOAuthSession['oauth_token_secret'] = $request['oauth_token_secret'];
         $_SESSION['twitterOAuth'] = $twitterOAuthSession;
-        header('Location: ' . $this->url('oauth/authenticate', '') . '?oauth_token=' . $request['oauth_token']);
+        $this->redirect($this->url('oauth/authenticate', '') . '?oauth_token=' . $request['oauth_token']);
       } else {
         $twitterOAuthSession['oauth_token'] = $_REQUEST['oauth_token'];
         // $twitterOAuthSession['oauth_token_secret'] = $_REQUEST['oauth_token_secret'];
         $twitterOAuthSession['oauth_verifier'] = $_REQUEST['oauth_verifier'];
         $_SESSION['twitterOAuth'] = $twitterOAuthSession;
-        header('Location: ' . $callback);
+        $this->redirect($callback);
       }
     } else {
       $accessToken = $this->getAccessToken($twitterOAuthSession['oauth_token'], $twitterOAuthSession['oauth_verifier']);
@@ -57,7 +56,7 @@ class Twitter extends tmhOAuth
         return $_SESSION['twitterOAuth'];
       } else {
         $_SESSION['twitterOAuth'] = '';
-        header('Location: ' . $callback);
+        $this->redirect($callback);
       }
     }
   }
@@ -114,5 +113,13 @@ class Twitter extends tmhOAuth
     } else {
       return false;
     }
+  }
+
+  /**
+   * @param $url
+   */
+  private function redirect($url){
+    header('Location: ' . $url);
+    exit();
   }
 } 
