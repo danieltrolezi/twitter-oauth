@@ -7,7 +7,7 @@
  *
  * @package twitter-oauth
  * @author Daniel Trolezi <danieltrolezi@outlook.com>
- * @version 1.0.3
+ * @version 1.0.4
  */
 class Twitter extends tmhOAuth
 {
@@ -17,10 +17,6 @@ class Twitter extends tmhOAuth
   {
     $this->consumerKeys = $consumerKeys;
     parent::__construct($consumerKeys);
-
-    if (session_status() == PHP_SESSION_NONE) {
-      session_start();
-    }
   }
 
   /**
@@ -29,7 +25,11 @@ class Twitter extends tmhOAuth
    */
   public function OAuth($callback)
   {
-    $twitterOAuthSession = (isset($_SESSION['twitterOAuth']) ? $_SESSION['twitterOAuth'] : null);
+    if (session_status() == PHP_SESSION_NONE) {
+      session_start();
+    }
+
+    $twitterOAuthSession = isset($_SESSION['twitterOAuth']) ? $_SESSION['twitterOAuth'] : null;
 
     if (!isset($twitterOAuthSession['oauth_verifier'])) {
       if (!isset($_REQUEST['oauth_verifier'])) {
@@ -37,28 +37,35 @@ class Twitter extends tmhOAuth
         $twitterOAuthSession['oauth_token'] = $request['oauth_token'];
         $twitterOAuthSession['oauth_token_secret'] = $request['oauth_token_secret'];
         $_SESSION['twitterOAuth'] = $twitterOAuthSession;
-        $this->redirect($this->url('oauth/authenticate', '') . '?oauth_token=' . $request['oauth_token']);
-      } else {
-        $twitterOAuthSession['oauth_token'] = $_REQUEST['oauth_token'];
-        // $twitterOAuthSession['oauth_token_secret'] = $_REQUEST['oauth_token_secret'];
-        $twitterOAuthSession['oauth_verifier'] = $_REQUEST['oauth_verifier'];
-        $_SESSION['twitterOAuth'] = $twitterOAuthSession;
-        $this->redirect($callback);
-      }
-    } else {
-      $accessToken = $this->getAccessToken($twitterOAuthSession['oauth_token'], $twitterOAuthSession['oauth_verifier']);
+        session_write_close();
 
-      if ($accessToken != false) {
-        $twitterOAuthSession['oauth_token'] = $accessToken['oauth_token'];
-        $twitterOAuthSession['oauth_token_secret'] = $accessToken['oauth_token_secret'];
-        $twitterOAuthSession['user_id'] = $accessToken['user_id'];
-        $_SESSION['twitterOAuth'] = $twitterOAuthSession;
-        return $_SESSION['twitterOAuth'];
-      } else {
-        $_SESSION['twitterOAuth'] = '';
-        $this->redirect($callback);
+        return $this->redirect($this->url('oauth/authenticate', '') . '?oauth_token=' . $request['oauth_token']);
       }
+
+      $twitterOAuthSession['oauth_token'] = $_REQUEST['oauth_token'];
+      // $twitterOAuthSession['oauth_token_secret'] = $_REQUEST['oauth_token_secret'];
+      $twitterOAuthSession['oauth_verifier'] = $_REQUEST['oauth_verifier'];
+      $_SESSION['twitterOAuth'] = $twitterOAuthSession;
+      session_write_close();
+
+      return $this->redirect($callback);
     }
+
+    $accessToken = $this->getAccessToken($twitterOAuthSession['oauth_token'], $twitterOAuthSession['oauth_verifier']);
+
+    if ($accessToken) {
+      $twitterOAuthSession['oauth_token'] = $accessToken['oauth_token'];
+      $twitterOAuthSession['oauth_token_secret'] = $accessToken['oauth_token_secret'];
+      $twitterOAuthSession['user_id'] = $accessToken['user_id'];
+      $_SESSION['twitterOAuth'] = $twitterOAuthSession;
+      session_write_close();
+
+      return $_SESSION['twitterOAuth'];
+    }
+
+    $_SESSION['twitterOAuth'] = null;
+    session_write_close();
+    $this->redirect($callback);
   }
 
   /**
@@ -122,4 +129,4 @@ class Twitter extends tmhOAuth
     header('Location: ' . $url);
     exit();
   }
-} 
+}
